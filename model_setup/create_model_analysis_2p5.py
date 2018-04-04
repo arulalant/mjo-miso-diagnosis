@@ -3,7 +3,9 @@ sys.path.append('..')
 from auto.cdscan_update import updateCdmlFile
 # global path variables
 inpath = '/gpfs3/home/umfcst/NCUM/post'
-outpath = '/gpfs4/home/arulalan/MJO/NCUM_ANL'
+outpath = '/gpfs4/home/arulalan/MJO/NCUM_ANL_DATA'
+anopath = '/gpfs4/home/arulalan/MJO/NCUM_ANL_ANO'
+climpath = '/gpfs4/home/arulalan/MJO/climatology/Daily/3vars'
 wgrib2 = '/gpfs1/home/Libs/GNU/WGRIB2/v2.0.4/wgrib2/wgrib2'
 cdo = '/gpfs1/home/Libs/INTEL/CDO/cdo-1.6.3/bin/cdo'
 checkpastdays = 5
@@ -28,6 +30,10 @@ def createAnalysisMJOinFiles(curday, nextday):
     outfile_24hrAvg_2p5 = os.path.join(outpath, 'um_ana_%s_daily_2p5x2p5.grib2' % curday)
     ncfile = 'um_ana_%s_daily_2p5x2p5.nc' % curday
     ncfilepath = os.path.join(outpath, ncfile)
+    anofile = 'um_ana_%s_daily_anomaly.nc' % curday
+    anofpath = os.path.join(anopath, anofile)
+    climfile = 'ulwrf_u200_850_merged.clim.mean+3harm.1979-2005.nc'
+    climfpath = os.path.join(climpath, climfile)
     cmd1 = '%s %s -match "(:UGRD:200 mb:|:UGRD:850 mb:)"  -grib_out %s' % (wgrib2, infile_00, outfile_6hrs)
     cmd2 = '%s %s -match "(:ULWRF:|:UGRD:200 mb:|:UGRD:850 mb:)" -append -grib_out %s' % (wgrib2, infile_06,
                                                                                           outfile_6hrs)
@@ -46,14 +52,30 @@ def createAnalysisMJOinFiles(curday, nextday):
 
     # nc3 conversion with correct time hour as 0
     cmd8 = '%s -f nc copy -settime,00:00:00 %s %s' % (cdo, outfile_24hrAvg_2p5, ncfilepath)
-    for cmd in [cmd1, cmd2, cmd3, cmd4, cmd5, cmd6, cmd7, cmd8]:
+    # calculate daily anomaly for olr, u200, u850 variables from mean+sum of 3 harmonic climatology
+    cmd9 = '%s -ydaysub %s %s %s' % (cdo, ncfilepath, climfpath, anofpath)
+    for cmd in [cmd1, cmd2, cmd3, cmd4, cmd5, cmd6, cmd7, cmd8, cmd9]:
         subprocess.call(cmd, shell=True)
     os.remove(outfile_6hrs)
     os.remove(outfile_24hrAvg)
     os.remove(outfile_24hrAvg_2p5)
+    # change working dir to outpath
     os.chdir(outpath)
-    # update cdscan xml daily by editing xml itself.
-    updateCdmlFile(ncfile, 'um_ana.xml')
+    if not os.path.isfile(os.path.join(outpath, 'um_ana_data.xml')):
+        # this case happens at very first time of model setup.
+        subprocess.call('cdscan -x um_ana_data.xml %s/*.nc' % outpath, shell=True)
+    else:
+        # update cdscan xml daily by editing xml itself.
+        updateCdmlFile(ncfile, 'um_ana_data.xml')
+
+    # change working dir to anopath
+    os.chdir(anopath)
+    if not os.path.isfile(os.path.join(anopath, 'um_ana_ano.xml')):
+        # this case happens at very first time of model setup.
+        subprocess.call('cdscan -x um_ana_ano.xml %s/*.nc' % anopath, shell=True)
+    else:
+        # update cdscan xml daily by editing xml itself.
+        updateCdmlFile(anofile, 'um_ana_ano.xml')
     # end of def createAnalysisMJOinFiles(curday):
 
 
@@ -65,7 +87,7 @@ if __name__ == '__main__':
 
     while pDay != tDay:
         pastDay = pDay.strftime('%Y%m%d')
-        outfile = os.path.join(outpath, 'um_ana_%s_daily_2p5x2p5.nc' % pastDay)
+        outfile = os.path.join(anopath, 'um_ana_%s_daily_anomaly.nc' % pastDay)
         lag1 = datetime.timedelta(days=1)
         pDay = (pDay + lag1)
         nextday = pDay.strftime('%Y%m%d')
@@ -73,4 +95,3 @@ if __name__ == '__main__':
         print "Done: ", pastDay
     # end of while pastDay != tDay:
     # end of if __name__ == '__main__':
-
