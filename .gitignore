@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# Fortran executables
+*.o
+
 # Distribution / packaging
 .Python
 env/
