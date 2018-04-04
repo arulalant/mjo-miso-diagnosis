@@ -1,0 +1,19 @@
+ncmlogin3:/gpfs2/home/arulalan/mmDiagnosis $ ls
+fftpack.F  mytest.f90
+ncmlogin3:/gpfs2/home/arulalan/mmDiagnosis $ gfortran -c fftpack.F 
+ncmlogin3:/gpfs2/home/arulalan/mmDiagnosis $ ls
+fftpack.F  fftpack.o  mytest.f90
+ncmlogin3:/gpfs2/home/arulalan/mmDiagnosis $ gfortran -o a.out
+mytest.f90 fftpack.o
+ncmlogin3:/gpfs2/home/arulalan/mmDiagnosis $ ./a.out 
+  coeff:    0.97814763    
+  coeff:    0.91354543    
+  coeff:    0.80901700    
+  coeff:    0.66913056    
+  coeff:    0.49999997    
+ fft coeff:    2.98023224E-08
+ fft coeff:     14.672215    
+ fft coeff:     3.1186757    
+ fft coeff:    4.42723547E-07
+ fft coeff:   -3.13628846E-07
+
