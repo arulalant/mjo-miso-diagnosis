@@ -64,9 +64,9 @@ def createDeterministicFcstMJOinFiles(curday, nextday):
     # update cdscan xml daily by editing xml itself.
     os.chdir(anapath)
     updateCdmlFile(ncfilepath, 'um_ana.xml', os.path.join(outpath, 'um_ana_tseries_and_fcst_10days_%s.xml' % curday))
-    
-# end of def createAnalysisMJOinFiles(curday):
 
+
+# end of def createAnalysisMJOinFiles(curday):
 
 if __name__ == '__main__':
 
@@ -85,4 +85,3 @@ if __name__ == '__main__':
         print "Done: ", pastDay
     # end of while pastDay != tDay:
     # end of if __name__ == '__main__':
-

@@ -1,6 +1,10 @@
 import array, os, sys, subprocess
 import numpy as np
 import cdms2, MV2
+cdms2.setAutoBounds('on')
+cdms2.setNetcdfShuffleFlag(0)
+cdms2.setNetcdfDeflateFlag(0)
+cdms2.setNetcdfDeflateLevelFlag(0)
 
 # https://www.johnny-lin.com/cdat_tips/tips_fileio/bin_array.html
 dpath = '/gpfs4/home/arulalan/MJO/climatology/Daily/olr'
