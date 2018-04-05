@@ -12,7 +12,7 @@ else:
     startdate = '20180317'
 
 
-def createDeterministicFcstMJOinFiles(curday, nextday):
+def createDeterministicFcstMJOanomalies(curday, nextday):
     indir = os.path.join(inpath, curday)
     nexdir = os.path.join(inpath, nextday)
     print "indir=", indir
@@ -92,7 +92,7 @@ if __name__ == '__main__':
         pDay = (pDay + lag1)
         print "outfile", outfile
         nextday = pDay.strftime('%Y%m%d')
-        if not os.path.exists(outfile): createDeterministicFcstMJOinFiles(pastDay, nextday)
+        if not os.path.exists(outfile): createDeterministicFcstMJOanomalies(pastDay, nextday)
         print "outfile", outfile
         print "Done: ", pastDay
     # end of while pastDay != tDay:

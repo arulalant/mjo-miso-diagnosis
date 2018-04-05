@@ -12,7 +12,7 @@ else:
     startdate = '20180317'
 
 
-def createAnalysisMJOinFiles(curday, nextday):
+def createAnalysisMJOanomalies(curday, nextday):
     indir = os.path.join(inpath, curday)
     nexdir = os.path.join(inpath, nextday)
     infile_00 = os.path.join(indir, 'um_ana_000hr_%s_00Z.grib2' % curday)
@@ -73,7 +73,7 @@ def createAnalysisMJOinFiles(curday, nextday):
     else:
         # update cdscan xml daily by editing xml itself.
         updateCdmlFile(anofile, 'um_ana_ano.xml')
-    # end of def createAnalysisMJOinFiles(curday):
+    # end of def createAnalysisMJOanomalies(curday):
 
 
 if __name__ == '__main__':
@@ -88,7 +88,7 @@ if __name__ == '__main__':
         lag1 = datetime.timedelta(days=1)
         pDay = (pDay + lag1)
         nextday = pDay.strftime('%Y%m%d')
-        if not os.path.exists(outfile): createAnalysisMJOinFiles(pastDay, nextday)
+        if not os.path.exists(outfile): createAnalysisMJOanomalies(pastDay, nextday)
         print "Done: ", pastDay
     # end of while pastDay != tDay:
     # end of if __name__ == '__main__':
