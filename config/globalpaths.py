@@ -1,0 +1,8 @@
+inpath = '/gpfs3/home/umfcst/NCUM/post'
+anadatapath = '/gpfs4/home/arulalan/MJO/NCUM_ANL_DATA'
+anaanopath = '/gpfs4/home/arulalan/MJO/NCUM_ANL_ANO'
+fcstdatapath = '/gpfs4/home/arulalan/MJO/NCUM_DETERMINISTIC_FCST_DATA'
+fcstanopath = '/gpfs4/home/arulalan/MJO/NCUM_DETERMINISTIC_FCST_ANO'
+climpath = '/gpfs4/home/arulalan/MJO/climatology/Daily/3vars'
+wgrib2 = '/gpfs1/home/Libs/GNU/WGRIB2/v2.0.7/grib2/wgrib2/wgrib2'
+cdo = '/gpfs1/home/Libs/INTEL/CDO/cdo-1.6.3/bin/cdo'
