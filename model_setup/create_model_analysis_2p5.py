@@ -2,13 +2,9 @@ import os, sys, subprocess, datetime
 sys.path.append('..')
 from auto.cdscan_update import updateCdmlFile
 # global path variables
-inpath = '/gpfs3/home/umfcst/NCUM/post'
-outpath = '/gpfs4/home/arulalan/MJO/NCUM_ANL_DATA'
-anopath = '/gpfs4/home/arulalan/MJO/NCUM_ANL_ANO'
-climpath = '/gpfs4/home/arulalan/MJO/climatology/Daily/3vars'
-wgrib2 = '/gpfs1/home/Libs/GNU/WGRIB2/v2.0.4/wgrib2/wgrib2'
-cdo = '/gpfs1/home/Libs/INTEL/CDO/cdo-1.6.3/bin/cdo'
-checkpastdays = 5
+from config.globalpaths import inpath, anadatapath, anaanopath, climpath, wgrib2, cdo
+
+checkpastdays = 130
 
 if os.environ.has_key('MMDIAGNOSIS_STARTDATE'):
     startdate = os.environ.get('MMDIAGNOSIS_STARTDATE')
@@ -25,13 +21,13 @@ def createAnalysisMJOinFiles(curday, nextday):
     infile_18 = os.path.join(indir, 'um_ana_018hr_%s_18Z.grib2' % curday)
     infile_00_nextday = os.path.join(nexdir, 'um_ana_000hr_%s_00Z.grib2' % nextday)
     if not os.path.isfile(infile_00_nextday): return
-    outfile_6hrs = os.path.join(outpath, 'um_ana_%s_6hrs.grib2' % curday)
-    outfile_24hrAvg = os.path.join(outpath, 'um_ana_%s_24hrsAvg.grib2' % curday)
-    outfile_24hrAvg_2p5 = os.path.join(outpath, 'um_ana_%s_daily_2p5x2p5.grib2' % curday)
+    outfile_6hrs = os.path.join(anadatapath, 'um_ana_%s_6hrs.grib2' % curday)
+    outfile_24hrAvg = os.path.join(anadatapath, 'um_ana_%s_24hrsAvg.grib2' % curday)
+    outfile_24hrAvg_2p5 = os.path.join(anadatapath, 'um_ana_%s_daily_2p5x2p5.grib2' % curday)
     ncfile = 'um_ana_%s_daily_2p5x2p5.nc' % curday
-    ncfilepath = os.path.join(outpath, ncfile)
+    ncfilepath = os.path.join(anadatapath, ncfile)
     anofile = 'um_ana_%s_daily_anomaly.nc' % curday
-    anofpath = os.path.join(anopath, anofile)
+    anofpath = os.path.join(anaanopath, anofile)
     climfile = 'ulwrf_u200_850_merged.clim.mean+3harm.1979-2005.nc'
     climfpath = os.path.join(climpath, climfile)
     cmd1 = '%s %s -match "(:UGRD:200 mb:|:UGRD:850 mb:)"  -grib_out %s' % (wgrib2, infile_00, outfile_6hrs)
@@ -59,20 +55,21 @@ def createAnalysisMJOinFiles(curday, nextday):
     os.remove(outfile_6hrs)
     os.remove(outfile_24hrAvg)
     os.remove(outfile_24hrAvg_2p5)
-    # change working dir to outpath
-    os.chdir(outpath)
-    if not os.path.isfile(os.path.join(outpath, 'um_ana_data.xml')):
+    # change working dir to anadatapath
+    os.chdir(anadatapath)
+    compcurday = curday[:4] + '-' + curday[4:6] + '-' + curday[6:]
+    if not os.path.isfile(os.path.join(anadatapath, 'um_ana_data.xml')):
         # this case happens at very first time of model setup.
-        subprocess.call('cdscan -x um_ana_data.xml %s/*.nc' % outpath, shell=True)
+        subprocess.call("cdscan -x um_ana_data.xml -r 'days since %s'  %s/*.nc" % (compcurday, anadatapath), shell=True)
     else:
         # update cdscan xml daily by editing xml itself.
         updateCdmlFile(ncfile, 'um_ana_data.xml')
 
-    # change working dir to anopath
-    os.chdir(anopath)
-    if not os.path.isfile(os.path.join(anopath, 'um_ana_ano.xml')):
+    # change working dir to anaanopath
+    os.chdir(anaanopath)
+    if not os.path.isfile(os.path.join(anaanopath, 'um_ana_ano.xml')):
         # this case happens at very first time of model setup.
-        subprocess.call('cdscan -x um_ana_ano.xml %s/*.nc' % anopath, shell=True)
+        subprocess.call("cdscan -x um_ana_ano.xml -r 'days since %s' %s/*.nc" % (compcurday, anaanopath), shell=True)
     else:
         # update cdscan xml daily by editing xml itself.
         updateCdmlFile(anofile, 'um_ana_ano.xml')
@@ -87,7 +84,7 @@ if __name__ == '__main__':
 
     while pDay != tDay:
         pastDay = pDay.strftime('%Y%m%d')
-        outfile = os.path.join(anopath, 'um_ana_%s_daily_anomaly.nc' % pastDay)
+        outfile = os.path.join(anaanopath, 'um_ana_%s_daily_anomaly.nc' % pastDay)
         lag1 = datetime.timedelta(days=1)
         pDay = (pDay + lag1)
         nextday = pDay.strftime('%Y%m%d')
