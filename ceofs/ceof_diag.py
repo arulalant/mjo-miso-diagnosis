@@ -1,6 +1,6 @@
 import numpy, cdms2, cdutil, genutil, os, sys, pickle
 from eofs.multivariate.cdms import MultivariateEof
-sys.path.append('..')
+sys.path.append('../..')
 from utils.timeutils import TimeUtility
 # global path variables
 from config.globalpaths import fcstanopath, mjoAnaInpath, mjoDFcstInpath

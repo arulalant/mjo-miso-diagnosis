@@ -1,6 +1,6 @@
 import os, sys, cdms2, datetime, pickle
 import ceof_diag
-sys.path.append('..')
+sys.path.append('../..')
 # global path variables
 from config.globalpaths import obsFilteredPath, mjoAnaInpath, mjoAnaProjpath, mjoDFcstInpath, mjoDFcstProjpath
 

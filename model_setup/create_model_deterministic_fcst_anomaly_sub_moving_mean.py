@@ -1,6 +1,6 @@
 import os, sys, subprocess, datetime
 import cdms2, cdutil
-sys.path.append('..')
+sys.path.append('../..')
 from auto.cdscan_update import updateCdmlFile
 from utils.timeutils import TimeUtility
 # global path variables

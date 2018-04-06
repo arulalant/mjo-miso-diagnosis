@@ -1,5 +1,5 @@
 import os, sys, subprocess, datetime
-sys.path.append('..')
+sys.path.append('../..')
 from auto.cdscan_update import updateCdmlFile
 # global path variables
 from config.globalpaths import inpath, anadatapath, anaanopath, climpath, wgrib2, cdo
