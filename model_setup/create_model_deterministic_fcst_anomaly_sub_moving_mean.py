@@ -59,8 +59,8 @@ def createDeterministicFcstMJOinFiles(curday):
             subtropical_data_avg = cdutil.averager(subtropical_data, axis='y')
             subtropical_data_avg /= longitudunal_norm_factor
             fdata = cdms2.createVariable(subtropical_data_avg, id=ovar)
-            axlist = axlist[0:-2] + [axlist[-1]
-                                    ]  # i.e omitting latitude axis, since we already averaged over that axis.
+            axlist = axlist[0:-2] + [axlist[-1]]
+            # i.e omitting latitude axis, since we already averaged over that axis.
             fdata.setAxisList(axlist)
             if i:
                 outf_df.write(fdata)  # forecast file
@@ -89,8 +89,8 @@ if __name__ == '__main__':
         pDay = (pDay + lag1)
         print "outfile", outfile
         nextday = pDay.strftime('%Y%m%d')
-        # if not os.path.exists(outfile):
-        createDeterministicFcstMJOinFiles(pastDay)
+        if not os.path.exists(outfile):
+            createDeterministicFcstMJOinFiles(pastDay)
         print "outfile", outfile
         print "Done: ", pastDay
     # end of while pastDay != tDay:
