@@ -25,18 +25,18 @@ c 3 seperate bin files.
       parameter(dir1='/gpfs4/home/arulalan/MJO/climatology/Daily/u200/')
 
 c Input file
-      open(11,file=dir1//'u200.mjo.daily.climatology.1979-2005.bin',
+      open(11,file=dir1//'u200.mjo.daily.climatology.1979-2001.bin',
      #        form='unformatted',access='stream',status='old')
 
 c Output files
       INQUIRE(iolength=rl1)mm
       INQUIRE(iolength=rl2)aa
       INQUIRE(iolength=rl3)bb
-      open(20,file=dir1//'u200.clim.mean.1979-2005.bin',
+      open(20,file=dir1//'u200.clim.mean.1979-2001.bin',
      #        access='direct',recl=rl1,status='replace')
-      open(21,file=dir1//'u200.clim.aa.1979-2005.bin',
+      open(21,file=dir1//'u200.clim.aa.1979-2001.bin',
      #        access='direct',recl=rl2,status='replace')
-      open(22,file=dir1//'u200.clim.bb.1979-2005.bin',
+      open(22,file=dir1//'u200.clim.bb.1979-2001.bin',
      #        access='direct',recl=rl3,status='replace')
 c    Initialize
       read(11) xxa

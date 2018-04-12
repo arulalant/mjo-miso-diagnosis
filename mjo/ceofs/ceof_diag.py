@@ -284,19 +284,20 @@ def genProjectedPcts(infile, outfile, eofobj, lat=(-15, 15, 'cob'), NEOF=4, seas
         data = f(var, squeeze=1)
         axlist = data.getAxisList()
         # get the normalized data & std of meridionally averaged data
-        if obs_vars_std:
-            mstd = obs_vars_std[var]  # get observed variable's std
-        else:
-            mstd = genutil.statistics.std(data, axis='t')
-        normal = data / mstd
-        normal.setAxisList(axlist)
-        normal.id = var
+        # if obs_vars_std:
+        #     mstd = obs_vars_std[var]  # get observed variable's std
+        # else:
+        #     mstd = genutil.statistics.std(data, axis='t')
+        # normal = data / mstd
+        # normal.setAxisList(axlist)
+        # normal.id = var
         # append the normalize data into normals list
-        normals.append(normal)
+        # normals.append(normal)
+        normals.append(data)
         # store the input variable generic name
         vnames.append(var)
         # make memory free
-        del normal, data
+        # del normal, data
     # end of for name, varName, infile in infiles:
     f.close()
     print "applying projected fileds"
@@ -317,8 +318,9 @@ def genProjectedPcts(infile, outfile, eofobj, lat=(-15, 15, 'cob'), NEOF=4, seas
             pcs_std = obs_pcts_std[i]  # get observed pcts std
         else:
             pcs_std = genutil.statistics.std(pcs_i, axis='t')
-        pcs_mean_i = cdutil.averager(pcs_i, axis='t')
-        norm_pcs_i = (pcs_i - pcs_mean_i) / pcs_std
+        # pcs_mean_i = cdutil.averager(pcs_i, axis='t')
+        # norm_pcs_i = (pcs_i - pcs_mean_i) / pcs_std
+        norm_pcs_i = pcs_i / pcs_std
         norm_pcs_i = cdms2.createVariable(norm_pcs_i)
         norm_pcs_i.id = 'norm_pcs' + str(i + 1)
         norm_pcs_i.setAxis(0, pctime)

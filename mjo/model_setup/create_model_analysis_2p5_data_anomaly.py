@@ -28,7 +28,7 @@ def createAnalysisMJOanomalies(curday, nextday):
     ncfilepath = os.path.join(anadatapath, ncfile)
     anofile = 'um_ana_%s_daily_anomaly.nc' % curday
     anofpath = os.path.join(anaanopath, anofile)
-    climfile = 'ulwrf_u200_850_merged.clim.mean+3harm.1979-2005.nc'
+    climfile = 'ulwrf_u200_850_merged.clim.mean+3harm.1979-2001.nc'
     climfpath = os.path.join(climpath, climfile)
     cmd1 = '%s %s -match "(:UGRD:200 mb:|:UGRD:850 mb:)"  -grib_out %s' % (wgrib2, infile_00, outfile_6hrs)
     cmd2 = '%s %s -match "(:ULWRF:|:UGRD:200 mb:|:UGRD:850 mb:)" -append -grib_out %s' % (wgrib2, infile_06,

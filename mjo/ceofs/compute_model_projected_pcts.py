@@ -20,13 +20,13 @@ def makeModelProjectedPCTS(curday):
     dfcstinfile = os.path.join(mjoDFcstInpath, 'um_determisitic_10days_fcst_mjo_project_input_%s.nc' % curday)
     dfcstoutfile = os.path.join(mjoDFcstProjpath, 'um_determisitic_10days_fcst_mjo_projected_pcts_%s.nc' % curday)
 
-    obs_outfile = os.path.join(obsFilteredPath, 'obs_olr_u200_u850_combinedEofs_1979-2005.nc')
+    obs_outfile = os.path.join(obsFilteredPath, 'obs_olr_u200_u850_combinedEofs_1979-2001.nc')
     f = cdms2.open(obs_outfile)
     obs_pcts_std = [f('pcs_std_%d' % i) for i in range(1, 5)]
-    obs_vars_std = {v: f('std_%s_all' % v) for v in ('olr', 'u200', 'u850')}
+    obs_vars_std = {v: f('std_%s_all' % v) for v in ['olr', 'u200', 'u850']}
     f.close()
 
-    eofobjfilepath = os.path.join(obsFilteredPath, 'obs_eofobj_level2_ceof_olr_u200_u850_all_1979-2005.pkl')
+    eofobjfilepath = os.path.join(obsFilteredPath, 'obs_eofobj_level2_ceof_olr_u200_u850_all_1979-2001.pkl')
     objf = open(eofobjfilepath, 'rb')
     eofobj = pickle.load(objf)
     objf.close()
@@ -64,7 +64,8 @@ if __name__ == '__main__':
         lag1 = datetime.timedelta(days=1)
         pDay = (pDay + lag1)
         nextday = pDay.strftime('%Y%m%d')
-        if not os.path.exists(outfile): makeModelProjectedPCTS(pastDay)
+        # if not os.path.exists(outfile):
+        makeModelProjectedPCTS(pastDay)
         print "Done: ", pastDay
     # end of while pastDay != tDay:
     # end of if __name__ == '__main__':

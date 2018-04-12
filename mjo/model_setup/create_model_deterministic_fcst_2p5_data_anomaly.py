@@ -25,7 +25,7 @@ def createDeterministicFcstMJOanomalies(curday, nextday):
     ncfilepath = os.path.join(fcstdatapath, ncfile)
     fcstanofile = 'um_determisitic_10days_fcst_%s_daily_anomaly.nc' % curday
     fcstanofpath = os.path.join(fcstanopath, fcstanofile)
-    climfile = 'ulwrf_u200_850_merged.clim.mean+3harm.1979-2005.nc'
+    climfile = 'ulwrf_u200_850_merged.clim.mean+3harm.1979-2001.nc'
     climfpath = os.path.join(climpath, climfile)
 
     outfile_24hrAvg_2p5_files = []

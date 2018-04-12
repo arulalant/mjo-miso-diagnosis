@@ -8,11 +8,11 @@ cdms2.setNetcdfDeflateLevelFlag(0)
 # https://www.johnny-lin.com/cdat_tips/tips_fileio/bin_array.html
 dpath = '/gpfs4/home/arulalan/MJO/climatology/Daily/u850'
 
-u850file = cdms2.open(os.path.join(dpath, 'u850.mjo.daily.climatology.1979-2005.nc'))
+u850file = cdms2.open(os.path.join(dpath, 'u850.mjo.daily.climatology.1979-2001.nc'))
 u850 = u850file('u850')
 u850file.close()
 
-binfile = os.path.join(dpath, 'u850.mjo.daily.climatology.1979-2005.bin')
+binfile = os.path.join(dpath, 'u850.mjo.daily.climatology.1979-2001.bin')
 fileobj = open(binfile, mode='wb')
 outvalues = array.array('f')
 outvalues.fromlist(u850.T.data.flatten('F').tolist())  # make sure access='stream' while reading in fortran
@@ -22,9 +22,9 @@ subprocess.call('gfortran -c fftpack.F', shell=True)
 subprocess.call('gfortran -o calc3har_u850.o calc3har_u850.f fftpack.o', shell=True)
 subprocess.call('./calc3har_u850.o', shell=True)
 
-meanfile = os.path.join(dpath, 'u850.clim.mean.1979-2005.bin')
-aafile = os.path.join(dpath, 'u850.clim.aa.1979-2005.bin')
-bbfile = os.path.join(dpath, 'u850.clim.bb.1979-2005.bin')
+meanfile = os.path.join(dpath, 'u850.clim.mean.1979-2001.bin')
+aafile = os.path.join(dpath, 'u850.clim.aa.1979-2001.bin')
+bbfile = os.path.join(dpath, 'u850.clim.bb.1979-2001.bin')
 num_lon = 144
 num_lat = 73
 fileobj = open(meanfile, mode='rb')
@@ -83,7 +83,7 @@ lonaxis.designateLongitude()
 
 mean_plus_3har.setAxisList([taxis, lataxis, lonaxis])
 
-outfname = os.path.join(dpath, 'u850.clim.mean+3harm.1979-2005.nc')
+outfname = os.path.join(dpath, 'u850.clim.mean+3harm.1979-2001.nc')
 outf = cdms2.open(outfname, 'w')
 outf.write(mean_plus_3har)
 outf.close()
