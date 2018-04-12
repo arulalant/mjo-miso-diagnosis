@@ -4,7 +4,7 @@ cdms2.setNetcdfShuffleFlag(0)
 cdms2.setNetcdfDeflateFlag(0)
 cdms2.setNetcdfDeflateLevelFlag(0)
 
-outfile = '/gpfs4/home/arulalan/MJO/climatology/Daily/ulwrf_u200_850_merged.clim.mean+3harm.1979-2001.nc'
+outfile = '/gpfs4/home/arulalan/MJO/climatology/Daily/3vars/ulwrf_u200_850_merged.clim.mean+3harm.1979-2001.nc'
 
 olrf = cdms2.open('/gpfs4/home/arulalan/MJO/climatology/Daily/olr/olr.clim.mean+3harm.1979-2001.nc')
 
@@ -12,7 +12,7 @@ u200f = cdms2.open('/gpfs4/home/arulalan/MJO/climatology/Daily/u200/u200.clim.me
 
 u850f = cdms2.open('/gpfs4/home/arulalan/MJO/climatology/Daily/u850/u850.clim.mean+3harm.1979-2001.nc')
 
-outf = cdms2.open('outfile', 'w')
+outf = cdms2.open(outfile, 'w')
 olr = olrf('olr_mean_plus_3harmoic_clim')
 olr.id = 'ulwrf'
 
