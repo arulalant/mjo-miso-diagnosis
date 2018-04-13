@@ -607,6 +607,14 @@ def phase3d(xdata,
         if syear < eyear:
             stitle1 += ' to %d' % eyear
             st1x = 0.795
+    elif stitle1 == 'date':
+        # get the start and end dates
+        taxis1 = xdata1.getTime().asComponentTime()
+        stime = str(taxis1[1]).split(' ')[0]
+        etime = str(taxis1[-1]).split(' ')[0]
+        stitle1 = 'Forecast (%d days): %s to %s' % (len(taxis1) - 1, stime, etime)
+        # make memory free
+        del taxis1
     # end of if stitle1 == 'year':
 
     # set the subtitle2 as season months if user not passed
@@ -617,22 +625,22 @@ def phase3d(xdata,
             emon = cdutil.getMonthString(taxis[-1].month)
             # make memory free
             del taxis
-            stitle2 = 'Season : %s to %s' % (smon.capitalize()[:3], emon.capitalize()[:3])
+            stitle2 = 'Analysis : %s to %s' % (smon.capitalize()[:3], emon.capitalize()[:3])
         elif ptype == 'multi':
-            stitle2 = 'Season : %s to %s' % (conMonths[0][0].capitalize()[:3], conMonths[-1][0].capitalize()[:3])
+            stitle2 = 'Analysis : %s to %s' % (conMonths[0][0].capitalize()[:3], conMonths[-1][0].capitalize()[:3])
     elif stitle2 == 'date':
         # get the start and end dates
         taxis = xdata.getTime().asComponentTime()
         stime = str(taxis[0]).split(' ')[0]
         etime = str(taxis[-1]).split(' ')[0]
-        stitle2 = 'Season : %s to %s' % (stime, etime)
+        stitle2 = 'Analysis (%d days): %s to %s' % (len(taxis), stime, etime)
         # make memory free
         del taxis
     # end of if stitle2 == 'month':
     # draw the title, subtitle1 and subtitle2
     x.add_string(0.52, 0.9, title, color='black', char_size=1.5, rot=0, just=14)
-    x.add_string(st1x, 0.86, stitle1, color='black', char_size=0.8, rot=0, just=14)
-    x.add_string(0.7, 0.84, stitle2, color='black', char_size=0.8, rot=0, just=14)
+    x.add_string(0.7, 0.86, stitle2, color='black', char_size=0.8, rot=0, just=14)
+    x.add_string(0.7, 0.84, stitle1, color='black', char_size=0.8, rot=0, just=14)
     if credits:
         # draw the footer comment
         created_on = 'Created On : ' + time.strftime('%Y-%m-%d %H:%M:%S %Z')

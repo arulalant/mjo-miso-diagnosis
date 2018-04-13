@@ -1,14 +1,20 @@
 import os, sys, datetime
-import cdms2, xmgrace
+import cdms2, xmgrace, MV2
 sys.path.append('../..')
 from utils.phase3d.phase3d import mjo_phase3d
 # global path variables
 from config.globalpaths import mjoAnaProjpath, mjoDFcstProjpath, mjoAnaAmpPhasepath, mjoDFcstAmpPhasepath, mjo_phase_line_plot_path
 
+# mjoAnaProjpath = '/Users/arulalan/tmp/mjo'
+# mjoDFcstProjpath = '/Users/arulalan/tmp/mjo'
+# mjoAnaAmpPhasepath = '/Users/arulalan/tmp/mjo'
+# mjoDFcstAmpPhasepath = '/Users/arulalan/tmp/mjo'
+# mjo_phase_line_plot_path = '/Users/arulalan/tmp/mjo'
+
 if os.environ.has_key('MMDIAGNOSIS_STARTDATE'):
     startdate = os.environ.get('MMDIAGNOSIS_STARTDATE')
 else:
-    startdate = '20180317'
+    startdate = '20180405'
 
 checkpastdays = 1
 
@@ -39,56 +45,78 @@ def makeProjectedPctsPhases3DPlots(curday, pcs1VarName, pcs2VarName, pcs2Sign=-1
     dfcstoutfile = os.path.join(mjoDFcstAmpPhasepath,
                                 'um_determisitic_10days_fcst_mjo_projected_pcts_1_2_amppha_%s.nc' % curday)
 
-    pcsf = cdms2.open(anainfile)
-    ampf = cdms2.open(anaoutfile)
+    pcsf_ana = cdms2.open(anainfile)
+    ampf_ana = cdms2.open(anaoutfile)
 
-    npc1 = pcsf(pcs1VarName)
-    npc2 = pcsf(pcs2VarName)
+    pcsf_dfcst = cdms2.open(dfcstinfile)
+    ampf_dfcst = cdms2.open(dfcstoutfile)
 
-    sdate = npc1.getTime().asComponentTime()[0]
+    npc1_ana = pcsf_ana(pcs1VarName)[-40:]
+    npc2_ana = pcsf_ana(pcs2VarName)[-40:]
+
+    npc1_dfcst = pcsf_dfcst(pcs1VarName)
+    npc2_dfcst = pcsf_dfcst(pcs2VarName)
+    sdate = npc1_ana.getTime().asComponentTime()[0]
     # get the phase alone for the sdate
-    phase = ampf('ampvar', time=sdate, amp_pha=1, squeeze=1)
+    phase = ampf_ana('amppha', time=sdate, amp_pha=1, squeeze=1)
     phase = int(phase)
     # multiply npc2 with pcs2sign. By default it wil be
     # multiplied with -1
-    npc2 = npc2 * pcs2Sign
-    if pcs1VarName.startswith('norm'):
-        npc1.id = 'Normalized Projected PC1'
-    if pcs2VarName.startswith('norm'):
-        npc2.id = 'Normalized Projected PC2'
+    npc2_ana = npc2_ana * pcs2Sign
+    npc2_dfcst = npc2_dfcst * pcs2Sign
 
-    anl_fcst = ''
-    # Jut to make sure the analysis and fcst hours are in same colors
-    # while plotting for its partners
-    if anl_fcst in ['Analysis']:
-        pcolors = ['magenta', 'blue', 'violet', 'orange', 'red', 'green']
-    elif anl_fcst in ['Merged']:
-        pcolors = ['red', 'magenta', 'blue', 'violet', 'orange', 'green']
-    else:
-        pcolors = ['magenta', 'blue', 'violet', 'orange', 'red', 'green']
-    # end of if anl_fcst in ['Analysis']:
+    npc1_ana.id = 'RMM1'
+    npc2_ana.id = 'RMM2'
+
+    # npc1_dfcst[0] = npc1_ana[-1]
+    # npc2_dfcst[0] = npc2_ana[-1]
+    tax = npc1_dfcst.getTime()
+    tax_ana = npc1_ana.getTime()[-1]
+    newt = tax[:].tolist()
+    newt.insert(0, tax_ana)
+    ntax = cdms2.createAxis(newt, id='time')
+    ntax.units = tax.units
+    ntax.designateTime()
+
+    npc1_dfcst = list(npc1_dfcst)
+    npc2_dfcst = list(npc2_dfcst)
+    npc1_dfcst.insert(0, npc1_ana[-1])  # just make sure that no discontinunity.
+    npc2_dfcst.insert(0, npc2_ana[-1])
+    npc1_dfcst = cdms2.createVariable(npc1_dfcst, id='RMM1')
+    npc2_dfcst = cdms2.createVariable(npc2_dfcst, id='RMM2')
+    print len(npc1_dfcst), len(ntax)
+
+    npc1_dfcst.setAxis(0, ntax)
+    npc2_dfcst.setAxis(0, ntax)
+    pcolors = [6, 8, 3, 2]
 
     ptitle = 'Title'
     outfname = 'phase3d_projected_norm_pcts_%s' % curday
     outfpath = os.path.join(mjo_phase_line_plot_path, outfname)
     # plotting
     x = mjo_phase3d(
-        npc1,
-        npc2,
+        npc1_ana,
+        npc2_ana,
         sxyphase=phase,
+        xdata1=npc1_dfcst,
+        ydata1=npc2_dfcst,
+        dmin=-4,
+        dmax=4,
         colors=pcolors,
         pposition1=None,
         plocation='in',
         mintick=4,
         pdirection='anticlock',
         title=ptitle,
-        stitle1='stitle1',
+        stitle1='date',
         stitle2='date',
         timeorder=None)
     # save plot
-    x.ps(outfpath)
-    ampf.close()
-    pcsf.close()
+    x.pdf(outfpath)
+    x.jpeg(outfpath)
+    ampf_ana.close()
+    pcsf_ana.close()
+    pcsf_dfcst.close()
 
 
 # end of def makeProjectedPctsPhases3DPlots(...):
