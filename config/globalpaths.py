@@ -1,4 +1,5 @@
 obspath = '/gpfs4/home/arulalan/MJO/obs_data/'
+recentobspath = '/gpfs4/home/arulalan/MJO/obs_data/OLR/NCEP-OLR/interpolated'
 obsFilteredPath = '/gpfs4/home/arulalan/MJO/obs_data/filteredData/'
 inpath = '/gpfs3/home/umfcst/NCUM/post'
 anadatapath = '/gpfs4/home/arulalan/MJO/NCUM_ANL_DATA'

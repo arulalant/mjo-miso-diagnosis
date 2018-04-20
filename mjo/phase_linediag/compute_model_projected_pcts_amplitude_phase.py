@@ -9,23 +9,22 @@ if os.environ.has_key('MMDIAGNOSIS_STARTDATE'):
 else:
     startdate = '20180317'
 
-checkpastdays = 1
+checkpastdays = 0
 
 
 def makeModelProjectedPCTS_AmplitutdePhases(curday):
 
-    anainfile = os.path.join(mjoAnaProjpath, 'um_analysis_mjo_projected_pcts_%s.nc' % curday)
+    anainfile = os.path.join(mjoAnaProjpath, 'obsolr_um_analysis_winds_mjo_projected_pcts_%s.nc' % curday)
     dfcstinfile = os.path.join(mjoDFcstProjpath, 'um_determisitic_10days_fcst_mjo_projected_pcts_%s.nc' % curday)
 
-    anaoutfile = os.path.join(mjoAnaAmpPhasepath, 'um_analysis_mjo_projected_pcts_1_2_amppha_%s.nc' % curday)
+    anaoutfile = os.path.join(mjoAnaAmpPhasepath,
+                              'obsolr_um_analysis_winds_mjo_projected_pcts_1_2_amppha_%s.nc' % curday)
     dfcstoutfile = os.path.join(mjoDFcstAmpPhasepath,
                                 'um_determisitic_10days_fcst_mjo_projected_pcts_1_2_amppha_%s.nc' % curday)
 
-    genMjoAmplitudePhases(
-        infile=anainfile, outfile=anaoutfile, pcs1VarName='norm_pcs1', pcs2VarName='norm_pcs2', pcs2Sign=-1)
+    genMjoAmplitudePhases(infile=anainfile, outfile=anaoutfile, pcs1VarName='RMM1', pcs2VarName='RMM2', pcs2Sign=1)
 
-    genMjoAmplitudePhases(
-        infile=dfcstinfile, outfile=dfcstoutfile, pcs1VarName='norm_pcs1', pcs2VarName='norm_pcs2', pcs2Sign=-1)
+    genMjoAmplitudePhases(infile=dfcstinfile, outfile=dfcstoutfile, pcs1VarName='RMM1', pcs2VarName='RMM2', pcs2Sign=1)
 
 
 if __name__ == '__main__':
@@ -34,7 +33,7 @@ if __name__ == '__main__':
     lag = datetime.timedelta(days=checkpastdays)
     pDay = (tDay - lag)
 
-    while pDay != tDay:
+    while pDay <= tDay:
         pastDay = pDay.strftime('%Y%m%d')
         outfile = os.path.join(mjoDFcstAmpPhasepath,
                                'um_determisitic_10days_fcst_mjo_projected_pcts_1_2_amppha_%s.nc' % pastDay)

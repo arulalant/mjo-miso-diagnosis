@@ -43,7 +43,7 @@ def updateCdmlFile(ufilepath, inputxml, outputxml=None):
         # write code here for get the difference is in either fvariables or
         # in cdms_filemap_vars.. then proceed further
         print diff_vars
-        sys.exit()
+        # sys.exit()
 
     firstvar = fvariables[0]
     ftime = f[firstvar].getTime().asComponentTime()
@@ -84,7 +84,7 @@ def updateCdmlFile(ufilepath, inputxml, outputxml=None):
         print "Already directory path '%s' is exists in cdms_filemap", newentry
         print "So not going to create/update xml file"
         #sys.exit()
-    else:    
+    else:
         cdms_filemap_entry = cdms_filemap_entry[:-3] + ',' + newentry
         # assign the updated cdms_filemap with new file path entry...
         root_attributes['cdms_filemap'] = cdms_filemap_entry
@@ -100,7 +100,8 @@ def updateCdmlFile(ufilepath, inputxml, outputxml=None):
         # end of if outputxml:
         p.close()
     # end of if newentry in cdms_filemap_entry:
-# end of def updateCdmlFile(ufilepath, inputxml, outputxml=None):
+    # end of def updateCdmlFile(ufilepath, inputxml, outputxml=None):
+
 
 if __name__ == '__main__':
 
@@ -108,10 +109,3 @@ if __name__ == '__main__':
     infile = sys.argv[2]
     updateCdmlFile(ufilepath, infile)
 # end of if __name__ == '__main__':
-
-
-
-
-
-
-

@@ -1,4 +1,4 @@
-import os, sys, datetime
+import os, sys, datetime, subprocess
 import cdms2, xmgrace, MV2
 sys.path.append('../..')
 from utils.phase3d.phase3d import mjo_phase3d
@@ -16,10 +16,10 @@ if os.environ.has_key('MMDIAGNOSIS_STARTDATE'):
 else:
     startdate = '20180405'
 
-checkpastdays = 1
+checkpastdays = 0
 
 
-def makeProjectedPctsPhases3DPlots(curday, pcs1VarName, pcs2VarName, pcs2Sign=-1, **kwarg):
+def makeProjectedPctsPhases3DPlots(curday, pcs1VarName, pcs2VarName, pcs2Sign=1, **kwarg):
     """
 
     KWarg:
@@ -33,15 +33,17 @@ def makeProjectedPctsPhases3DPlots(curday, pcs1VarName, pcs2VarName, pcs2Sign=-1
     """
 
     x = kwarg.get('x', None)
+    pastAnlDays = kwarg.get('pastAnlDays', 40)
     if x is None:
         x = xmgrace.init()
         print "x init"
     # end of if x is None:
 
-    anainfile = os.path.join(mjoAnaProjpath, 'um_analysis_mjo_projected_pcts_%s.nc' % curday)
+    anainfile = os.path.join(mjoAnaProjpath, 'obsolr_um_analysis_winds_mjo_projected_pcts_%s.nc' % curday)
     dfcstinfile = os.path.join(mjoDFcstProjpath, 'um_determisitic_10days_fcst_mjo_projected_pcts_%s.nc' % curday)
 
-    anaoutfile = os.path.join(mjoAnaAmpPhasepath, 'um_analysis_mjo_projected_pcts_1_2_amppha_%s.nc' % curday)
+    anaoutfile = os.path.join(mjoAnaAmpPhasepath,
+                              'obsolr_um_analysis_winds_mjo_projected_pcts_1_2_amppha_%s.nc' % curday)
     dfcstoutfile = os.path.join(mjoDFcstAmpPhasepath,
                                 'um_determisitic_10days_fcst_mjo_projected_pcts_1_2_amppha_%s.nc' % curday)
 
@@ -51,9 +53,9 @@ def makeProjectedPctsPhases3DPlots(curday, pcs1VarName, pcs2VarName, pcs2Sign=-1
     pcsf_dfcst = cdms2.open(dfcstinfile)
     ampf_dfcst = cdms2.open(dfcstoutfile)
 
-    npc1_ana = pcsf_ana(pcs1VarName)[-40:]
-    npc2_ana = pcsf_ana(pcs2VarName)[-40:]
-
+    npc1_ana = pcsf_ana(pcs1VarName)[-pastAnlDays:]
+    npc2_ana = pcsf_ana(pcs2VarName)[-pastAnlDays:]
+    print "npc1_ana", pcsf_ana[pcs1VarName].shape
     npc1_dfcst = pcsf_dfcst(pcs1VarName)
     npc2_dfcst = pcsf_dfcst(pcs2VarName)
     sdate = npc1_ana.getTime().asComponentTime()[0]
@@ -90,8 +92,8 @@ def makeProjectedPctsPhases3DPlots(curday, pcs1VarName, pcs2VarName, pcs2Sign=-1
     npc2_dfcst.setAxis(0, ntax)
     pcolors = [6, 8, 3, 2]
 
-    ptitle = 'Title'
-    outfname = 'phase3d_projected_norm_pcts_%s' % curday
+    ptitle = 'NCUM MJO Index Analysis + Forecast'
+    outfname = 'NCUM_MJO_INDEX_%s_%d+10days' % (curday, pastAnlDays)
     outfpath = os.path.join(mjo_phase_line_plot_path, outfname)
     # plotting
     x = mjo_phase3d(
@@ -112,11 +114,14 @@ def makeProjectedPctsPhases3DPlots(curday, pcs1VarName, pcs2VarName, pcs2Sign=-1
         stitle2='date',
         timeorder=None)
     # save plot
-    x.pdf(outfpath)
+    x.ps(outfpath)
     x.jpeg(outfpath)
+    subprocess.call('ps2pdf %s' % outfpath, shell=True)
+
     ampf_ana.close()
     pcsf_ana.close()
     pcsf_dfcst.close()
+    x.close()
 
 
 # end of def makeProjectedPctsPhases3DPlots(...):
@@ -127,13 +132,16 @@ if __name__ == '__main__':
     lag = datetime.timedelta(days=checkpastdays)
     pDay = (tDay - lag)
 
-    while pDay != tDay:
+    while pDay <= tDay:
         pastDay = pDay.strftime('%Y%m%d')
         lag1 = datetime.timedelta(days=1)
         pDay = (pDay + lag1)
         nextday = pDay.strftime('%Y%m%d')
         x = xmgrace.init()
-        makeProjectedPctsPhases3DPlots(pastDay, 'norm_pcs1', 'norm_pcs2', x=x)
+        makeProjectedPctsPhases3DPlots(pastDay, 'RMM1', 'RMM2', x=x, pastAnlDays=40)
+        x = xmgrace.init()
+        makeProjectedPctsPhases3DPlots(pastDay, 'RMM1', 'RMM2', x=x, pastAnlDays=90)
+
         print "Done: ", pastDay
     # end of while pastDay != tDay:
     # end of if __name__ == '__main__':
